@@ -1,0 +1,31 @@
+name: Pipeline CI/CD 
+run-name: ${{ github.actor }} fez ${{ github.event_name }} e acionou a integração contínua.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  SDK_VER: "8.0.x"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - name: Faz checkout no repositório.
+      uses: actions/checkout@v4
+    - name: Prepara ambiente .NET necessário para execução. 🔧
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.SDK_VER }}
+    - name: Apresenta versão instalada do .NET. 🔍
+      run: dotnet --list-sdks
+    - name: Obtem dependências do projeto. 📜
+      run: dotnet restore
+    - name: Realiza o build do projeto.
+      run: dotnet build --no-restore --configuration Release
