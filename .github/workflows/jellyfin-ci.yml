@@ -63,11 +63,16 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         queries: +security-extended
+    - name: Executa autobuild para preparar artefato de análise.
+      uses: github/codeql-action/autobuild@v3
     - name: Executa análise de código. 🕵️
       uses: github/codeql-action/analyze@v3
   build:
     name: Build
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+    runs-on: "${{ matrix.os }}"
     permissions:
       contents: read
     steps:
@@ -84,9 +89,9 @@ jobs:
     - name: Realiza o build do projeto. 🔨
       run: dotnet build --no-restore --configuration Release
     - name: Publica a aplicação em seu formato pronto para deploy. 🎉
-      run: dotnet build Jellyfin.Server --configuration Release -o ./deploy-artifact
+      run: dotnet publish --configuration Release --output ./deploy-artifact
     - name: Anexa artefato de deploy gerado à execução.
       uses: actions/upload-artifact@v4
       with:
-        name: Build
+        name: Jellyfin-${{ matrix.os }}-build
         path: deploy-artifact
