@@ -20,20 +20,52 @@ jobs:
     steps:
     - name: Faz checkout no repositório.
       uses: actions/checkout@v4
-    - name: Prepara ambiente .NET necessário para execução. 🔧
+    - name: Prepara ambiente DotNet necessário para execução. 🔧
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.SDK_VER }}
-    - name: Apresenta versão instalada do .NET. 🔍
+    - name: Apresenta versão instalada do DotNet. 🔍
       run: dotnet --list-sdks
     - name: Obtem dependências do projeto. 📜
       run: dotnet restore
     - name: Realiza o build do projeto.
       run: dotnet build --no-restore --configuration Release
+  test:
+    name: Test
+    needs: build
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+    runs-on: "${{ matrix.os }}"
+    steps:
+    - name: Faz checkout no repositório.
+      uses: actions/checkout@v4
+    - name: Prepara ambiente DotNet necessário para execução. 🔧
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.SDK_VER }}
+    - name: Executa testes utilizando a DotNet CLI. 🧪
+      run: >
+        dotnet test Jellyfin.sln
+        --configuration Release
+        --collect:"XPlat Code Coverage"
+        --settings tests/coverletArgs.runsettings
+        --verbosity minimal
+    - name: Merge code coverage results
+      uses: danielpalme/ReportGenerator-GitHub-Action@v5
+      with:
+        reports: "**/coverage.xml"
+        targetdir: "coveragereport"
+        reporttypes: "HTML;MarkdownSummaryGithub"
+    - name: Upload coverage report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: CoverageReport-${{ matrix.os }} # Artifact name        
+        path: coveragereport # Directory containing files to upload
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    needs: build
+    needs: test
     strategy:
       fail-fast: false
       matrix:
@@ -41,7 +73,7 @@ jobs:
     steps:
     - name: Faz checkout no repositório.
       uses: actions/checkout@v4
-    - name: Prepara ambiente .NET necessário para execução. 🔧
+    - name: Prepara ambiente DotNet necessário para execução. 🔧
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.SDK_VER }}
@@ -54,4 +86,3 @@ jobs:
       uses: github/codeql-action/autobuild@v3
     - name: Executa análise de código. 🕵️
       uses: github/codeql-action/analyze@v3
-    
