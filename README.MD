@@ -49,4 +49,22 @@ Esta etapa é composta pelos seguintes passos:
 
 ## Melhorias
 
+Algumas melhorias que eu vejo para a pipeline construída são as seguintes:
+
+### Refinar Análise de Cobertura de Testes
+
+No estado atual a etapa de testes apenas gera um relatório contendo as informações geradas pela análise de cobertura de testes, uma possível evolução seria utilizar essas informações ativamente na pipeline. Um cenário que vejo seria a definição de regras estabelecendo um mínimo de cobertura de testes para que aquele snapshot esteja apto para prosseguir na integração contínua.
+
+### Refinar Análise de Qualidade
+
+Na definição atual da etapa de análise de qualidade, os alertas apenas são listados na página dedicada à análise de código. Uma possível melhoria para essa etapa seria a utilização ativa das informações geradas, definindo quality gates para julgar se um respectivo snapshot do projeto está apto a prosseguir na integração contínua ou não.
+
+### Refinar processo de Build
+
+A etapa de build atual apenas anexa o artefato gerado ao workflow acionado. Uma melhoria para essa etapa seria a automação do versionamento e criação de releases, de modo que uma versão do projeto fosse automaticamente publicada para release se passasse com sucesso em todas as etapas estabelecidas da pipeline.
+
 ## Reflexão Pessoal
+
+Realizar esse projeto foi muito interessante. Eu já tinha um pouco de experiência com a utilização de workflows no GitHub porque a sistematização da disciplina "Gerência de Configuração" abordou um cenário similar a esse. Mas nesse caso, o fato do projeto escolhido utilizar a linguagem DotNet, com a qual eu não tinha experiência alguma antes, e de um dos passos ser a utilização de uma ferramenta de análise de código tornou ele um verdadeiro desafio.
+
+Foi muito benéfico ter essa oportunidade de obter novos conhecimentos na utilização da DotNet e da ferramenta CodeQL, que eu sequer conhecia antes de iniciar as aulas da disciplina, além de poder me aprofundar ainda mais na utilização dos workflows do GitHub.
