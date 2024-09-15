@@ -84,7 +84,7 @@ jobs:
     - name: Realiza o build do projeto. 🔨
       run: dotnet build --no-restore --configuration Release
     - name: Publica a aplicação em seu formato pronto para deploy. 🎉
-      run: dotnet publish --configuration Release --output ./deploy-artifact
+      run: dotnet build Jellyfin.Server --configuration Release -o ./deploy-artifact
     - name: Anexa artefato de deploy gerado à execução.
       uses: actions/upload-artifact@v4
       with:
