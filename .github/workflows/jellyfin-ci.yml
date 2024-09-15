@@ -12,31 +12,9 @@ env:
   SDK_VER: "8.0.x"
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-    - name: Faz checkout no repositório.
-      uses: actions/checkout@v4
-    - name: Prepara ambiente DotNet necessário para execução. 🔧
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.SDK_VER }}
-    - name: Apresenta versão instalada do DotNet. 🔍
-      run: dotnet --list-sdks
-    - name: Obtem dependências do projeto. 📜
-      run: dotnet restore
-    - name: Realiza o build do projeto.
-      run: dotnet build --no-restore --configuration Release
   test:
     name: Test
-    needs: build
-    strategy:
-      matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-    runs-on: "${{ matrix.os }}"
+    runs-on: ubuntu-latest
     steps:
     - name: Faz checkout no repositório.
       uses: actions/checkout@v4
@@ -51,17 +29,17 @@ jobs:
         --collect:"XPlat Code Coverage"
         --settings tests/coverletArgs.runsettings
         --verbosity minimal
-    - name: Merge code coverage results
+    - name: Gera relatórios de cobertura de testes.
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
         reports: "**/coverage.cobertura.xml"
         targetdir: "coveragereport"
-        reporttypes: "HTML;MarkdownSummaryGithub"
-    - name: Upload coverage report artifact
+        reporttypes: "MarkdownSummaryGithub"
+    - name: Anexa documento de relatório de cobertura de testes à execução.
       uses: actions/upload-artifact@v4
       with:
-        name: CoverageReport-${{ matrix.os }} # Artifact name        
-        path: coveragereport # Directory containing files to upload
+        name: CoverageReport
+        path: coveragereport
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
@@ -86,3 +64,29 @@ jobs:
       uses: github/codeql-action/autobuild@v3
     - name: Executa análise de código. 🕵️
       uses: github/codeql-action/analyze@v3
+  build:
+    name: Build
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - name: Faz checkout no repositório.
+      uses: actions/checkout@v4
+    - name: Prepara ambiente DotNet necessário para execução. 🔧
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.SDK_VER }}
+    - name: Apresenta versão instalada do DotNet. 🔍
+      run: dotnet --list-sdks
+    - name: Obtem dependências do projeto. 📜
+      run: dotnet restore
+    - name: Realiza o build do projeto. 🔨
+      run: dotnet build --no-restore --configuration Release
+    - name: Publica a aplicação em seu formato pronto para deploy. 🎉
+      run: dotnet publish --configuration Release --output ./deploy-artifact
+    - name: Anexa artefato de deploy gerado à execução.
+      uses: actions/upload-artifact@v4
+      with:
+        name: Build
+        path: deploy-artifact
