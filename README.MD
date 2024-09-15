@@ -43,8 +43,8 @@ Esta etapa é composta pelos seguintes passos:
 - `actions/setup-dotnet@v4`
 - `dotnet --list-sdks`: Neste passo já temos o repositório disponível para ser utilizado no workflow e o ambiente .NET configurado. Ao ser executado, apresenta na saída quais versões de SDK .NET estão disponíveis para uso. O objetivo dela é ser informativa, apresentando um pouco do ambiente configurado no passo anterior.
 - `dotnet restore`: Este passo executa a ação de restore do .NET CLI, identificando e baixando, caso necessário, as dependências do projeto.
-- `dotnet build --no-restore --configuration Release`: Este passo executa a ação de build do .NET CLI que compila o projeto e suas dependências em um conjunto de binários. As flags passadas configuram o processo para que ele não realize a ação de `restore`, já executada no passo anterior, e para que realize o build utilizando as configurações da categoria *Release*.
-- `dotnet publish --configuration Release --output ./deploy-artifact`: Este passo executa a ação de publicar do .NET CLI que empacota o projeto e  gera a aplicação em seu formato pronto para deploy.
+- `dotnet build Jellyfin.Server --no-restore --configuration Release`: Este passo executa a ação de build do .NET CLI que compila o projeto e suas dependências em um conjunto de binários. As flags passadas configuram o processo para que ele não realize a ação de `restore`, já executada no passo anterior, e para que realize o build utilizando as configurações da categoria *Release*.
+- `dotnet publish Jellyfin.Server --configuration Release --output ./deploy-artifact`: Este passo executa a ação de publicar do .NET CLI que empacota o projeto e  gera a aplicação em seu formato pronto para deploy.
 - `actions/upload-artifact@v4`
 
 ## Melhorias
