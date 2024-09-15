@@ -54,7 +54,7 @@ jobs:
     - name: Merge code coverage results
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
-        reports: "**/coverage.xml"
+        reports: "**/coverage.cobertura.xml"
         targetdir: "coveragereport"
         reporttypes: "HTML;MarkdownSummaryGithub"
     - name: Upload coverage report artifact
