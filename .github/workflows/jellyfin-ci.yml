@@ -39,12 +39,6 @@ jobs:
       matrix:
         language: [ 'csharp' ]
     steps:
-    - name: Faz checkout no repositório.
-      uses: actions/checkout@v4
-    - name: Prepara ambiente .NET necessário para execução. 🔧
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.SDK_VER }}
     - name: Inicializa o CodeQL.
       uses: github/codeql-action/init@v3
       with:
