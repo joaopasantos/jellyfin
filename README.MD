@@ -4,26 +4,26 @@ Este fork do projeto Jellyfin foi criado para servir como o projeto de código a
 
 ## Pipeline
 
-A pipeline construída está contida no arquivo `jellyfin-ci.yml` da pasta `.github/workflows/`.
+O pipeline construído está contido no arquivo `jellyfin-ci.yml` da pasta `.github/workflows/`.
 
 Abaixo, cada etapa será apresentada de forma detalhada.
 
 ### `test`
 
-A primeira etapa configurada na pipeline é a etapa `test`, ela tem um nome auto-explicativo. Nela, a automação irá executar os testes do projeto utilizando a CLI DotNet e gerar o relatório de cobertura de testes utilizando a ferramenta ReportGenerator.
+A primeira etapa configurada no pipeline é a etapa `test`, ela tem um nome auto-explicativo. Nela, a automação irá executar os testes do projeto utilizando a CLI DotNet e gerar o relatório de cobertura de testes utilizando a ferramenta ReportGenerator.
 
 Esta etapa é composta pelos seguintes passos:
 
 - `actions/checkout@v4`: Esta é uma ação pré-existente do repositório de ações do GitHub. Essa ação realiza o check out do repositório de código para que o workflow consiga acessá-lo.
-- `actions/setup-dotnet@v4`: Esta é uma ação pré-existente do repositório de ações do GitHub. Essa ação automatiza a configuração do ambiente .NET que será utilizado no workflow. A ação aceita múltiplos parâmetros que personalizam o ambiente a ser configurado, mas no caso da pipeline configurada definimos apenas a versão do .NET a ser utilizada. 
+- `actions/setup-dotnet@v4`: Esta é uma ação pré-existente do repositório de ações do GitHub. Essa ação automatiza a configuração do ambiente .NET que será utilizado no workflow. A ação aceita múltiplos parâmetros que personalizam o ambiente a ser configurado, mas no caso do pipeline configurado definimos apenas a versão do .NET a ser utilizada. 
 - `dotnet test`: Este comando realiza o build da solução e executa os testes unitários da aplicação. Ao fim de sua execução um arquivo `coverage.cobertura.xml` é gerado, contendo os dados sobre a cobertura de testes.
 - `danielpalme/ReportGenerator-GitHub-Action@v5`: Esta é uma ação pré-existente que engloba o uso da ferramenta ReportGenerator. Ao ser executada, ela utiliza o arquivo gerado no passo anterior para gerar um relatório de cobertura de testes nos formatos configurados (no nosso caso, um documento no formato Markdown e compatível com o GitHub).
 - `actions/upload-artifact@v4`: Esta é uma ação pré-existente do repositório de ações do GitHub. Ela comprime e anexa o diretório especificado à execução do workflow. 
-- `cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY`: Nesse passo, utilizamos a variável `$GITHUB_STEP_SUMMARY` para publicar o relatório de cobertura de teste na página de execução do workflow.
+- `cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY`: Neste passo, utilizamos a variável `$GITHUB_STEP_SUMMARY` para publicar o relatório de cobertura de teste na página de execução do workflow.
 
 ### `analyze`
 
-A etapa `analyze` depende da etapa `test` para iniciar sua execução. Nela, a automação irá executar o processo de análise de qualidade de código usando a ferramenta CodeQL para cada uma das linguagens configuradas na matriz. O resultado da análise pode ser obervado na aba `Security`, opção `Code scanning`, onde todos os alertas gerados na análise estarão listados.
+A etapa `analyze` depende da etapa `test` para iniciar sua execução. Nela, a automação irá executar o processo de análise de qualidade de código usando a ferramenta CodeQL para cada uma das linguagens configuradas na matriz de estratégia. O resultado da análise pode ser observado na aba `Security`, opção `Code scanning`, onde todos os alertas gerados na análise estarão listados.
 
 Esta etapa é composta pelos seguintes passos:
 
@@ -35,7 +35,7 @@ Esta etapa é composta pelos seguintes passos:
 
 ### `build`
 
-A etapa `build` é executada em paralelo à etapa `test` quando a pipeline é acionada. Nela, a automação irá executar o processo de build do DotNet para compilar o projeto e suas dependências.
+A etapa `build` é executada em paralelo à etapa `test` quando o pipeline é acionado. Nela, a automação irá executar o processo de build do DotNet para compilar o projeto e suas dependências para cada um dos sistemas operacionais definidos na matriz de estratégia.
 
 Esta etapa é composta pelos seguintes passos:
 
@@ -49,11 +49,11 @@ Esta etapa é composta pelos seguintes passos:
 
 ## Melhorias
 
-Algumas melhorias que eu vejo para a pipeline construída são as seguintes:
+Algumas melhorias que eu vejo para o pipeline construído são as seguintes:
 
 ### Refinar Análise de Cobertura de Testes
 
-No estado atual a etapa de testes apenas gera um relatório contendo as informações geradas pela análise de cobertura de testes, uma possível evolução seria utilizar essas informações ativamente na pipeline. Um cenário que vejo seria a definição de regras estabelecendo um mínimo de cobertura de testes para que aquele snapshot esteja apto para prosseguir na integração contínua.
+No estado atual a etapa de testes apenas gera um relatório contendo as informações geradas pela análise de cobertura de testes, uma possível evolução seria utilizar essas informações ativamente no pipeline. Um cenário que vejo seria a definição de regras estabelecendo um mínimo de cobertura de testes para que aquele snapshot esteja apto para prosseguir na integração contínua.
 
 ### Refinar Análise de Qualidade
 
@@ -61,7 +61,7 @@ Na definição atual da etapa de análise de qualidade, os alertas apenas são l
 
 ### Refinar processo de Build
 
-A etapa de build atual apenas anexa o artefato gerado ao workflow acionado. Uma melhoria para essa etapa seria a automação do versionamento e criação de releases, de modo que uma versão do projeto fosse automaticamente publicada para release se passasse com sucesso em todas as etapas estabelecidas da pipeline.
+A etapa de build atual apenas anexa o artefato gerado ao workflow acionado. Uma melhoria para essa etapa seria a automação do versionamento e criação de releases, de modo que uma versão do projeto fosse automaticamente publicada para release se passasse com sucesso em todas as etapas estabelecidas do pipeline.
 
 ## Reflexão Pessoal
 
