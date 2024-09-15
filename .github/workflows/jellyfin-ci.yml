@@ -40,6 +40,9 @@ jobs:
       with:
         name: CoverageReport
         path: coveragereport
+    - name: Publica relatório de cobertura na página da execução.
+      run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY 
+      shell: bash
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
@@ -66,7 +69,6 @@ jobs:
       uses: github/codeql-action/analyze@v3
   build:
     name: Build
-    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
